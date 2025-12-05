@@ -86,12 +86,4 @@ body {
     background-color: #ffffff;
 }
 
-/* ⚠ button 전체 스타일 삭제 (메인페이지 버튼 유지 위해) */
-button {
-    all: unset; /* 버튼 기본값 삭제 */
-    cursor: pointer;
-}
-button:hover {
-    opacity: 0.9;
-}
 
