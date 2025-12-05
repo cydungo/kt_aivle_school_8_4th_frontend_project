@@ -1,12 +1,12 @@
 import { Routes, Route } from "react-router-dom";
 import MainPage from "./assets/page/mainpage.jsx";
-//import RegisterPage from "./assets/page/RegisterPage.jsx";
+import RegisterPage from "./assets/rpage/rgtpage.jsx";
 
 function App() {
     return (
         <Routes>
             <Route path="/" element={<MainPage />} />
-            {/*<Route path="/register" element={<RegisterPage />} />*/}
+            <Route path="/register" element={<RegisterPage />} />
         </Routes>
     );
 }
