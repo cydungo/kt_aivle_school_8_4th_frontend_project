@@ -61,7 +61,7 @@ export default function MainPage() {
 
             {/* 카드 리스트 */}
             <div className="card-row">
-                {currentItems.length <= 1 ? (
+                {currentItems.length < 1 ? (
                     <div className="card">
                         <div>등록된 작품이 없습니다.</div>
                         <button
@@ -74,7 +74,9 @@ export default function MainPage() {
                 ) : (
                     currentItems.map(item => (
 
-                        <div className="card" key={item.bookId}>
+                        <div className="card" key={item.bookId}
+                             onClick={() => navigate(`/detail/${item.bookId}`)}
+                             style={{ cursor: 'pointer' }}>
                             <img src={item.coverImageUrl} alt="작품이미지" className="card-img" />
                             <div className="title">{item.title}</div>
                         </div>
