@@ -1,14 +1,14 @@
-import { Routes, Route } from "react-router-dom";
-import MainPage from "./assets/page/mainpage.jsx";
-import RegisterPage from "./assets/rpage/rgtpage.jsx";
+import {Route, Routes} from "react-router-dom";
+import MainPage from "./pages/MainPage.jsx";
+import RegisterPage from "./pages/NewBookPage.jsx";
 
 function App() {
-    return (
-        <Routes>
-            <Route path="/" element={<MainPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-        </Routes>
-    );
+  return (
+      <Routes>
+        <Route path="/" element={<MainPage/>}/>
+        <Route path="/register" element={<RegisterPage/>}/>
+      </Routes>
+  );
 }
 
 export default App;
