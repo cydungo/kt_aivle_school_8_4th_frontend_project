@@ -30,8 +30,6 @@ export default function MainPage() {
 
         fetchBooks();
     }, []);
-    if (loading) return <div>로딩중...</div>;
-    if (error) return <div>오류가 발생했습니다.</div>;
     //한페이지에 보여줄수 있는 아이템 개수
 
 
@@ -46,6 +44,8 @@ export default function MainPage() {
     const indexLast = currentPage * itemsPerPage;
     const indexFirst = indexLast - itemsPerPage;
     const currentItems = items.slice(indexFirst, indexLast);
+    if (loading){ return <div>로딩중...</div>;}
+    if (error) return <div>서버 연결 오류가 발생했습니다.</div>;
     return (
         <div className="container">
             {/* 페이지 배너 */}
@@ -61,13 +61,25 @@ export default function MainPage() {
 
             {/* 카드 리스트 */}
             <div className="card-row">
-                {currentItems.map(item => (
+                {currentItems.length <= 1 ? (
+                    <div className="card">
+                        <div>등록된 작품이 없습니다.</div>
+                        <button
+                            className="register-btn"
+                            onClick={() => navigate("/register")}
+                        >
+                            작품 등록하기
+                        </button>
+                    </div>
+                ) : (
+                    currentItems.map(item => (
 
                     <div className="card" key={item.bookId}>
                         <img src={item.coverImageUrl} alt="작품이미지" className="card-img" />
                         <div className="title">{item.title}</div>
                     </div>
-                ))}
+                    ))
+                )}
             </div>
             <div className="pagination">
                 {Array.from({length: totalPages}, (_, i) => (
