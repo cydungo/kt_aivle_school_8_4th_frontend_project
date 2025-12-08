@@ -135,6 +135,7 @@ export default function BDPage() {
                     목록
                 </button>
             </div>
+
         </div>
     );
 }
