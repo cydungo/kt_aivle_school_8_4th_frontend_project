@@ -78,7 +78,6 @@ const NewBookCoverPage = () => {
     const [message, setMessage] = useState(null);
     const [messageSeverity, setMessageSeverity] = useState('info');
     const [generatedImageUrl, setGeneratedImageUrl] = useState(null);
-
     const handleRegenerateCover = async () => {
         setMessage(null);
 

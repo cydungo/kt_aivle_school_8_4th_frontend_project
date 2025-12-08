@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {createContext, useState} from "react";
 import { useNavigate } from "react-router-dom";
 import {
     Alert,
@@ -96,7 +96,7 @@ export default function NewBookPageMUI() {
             //navigate(`/detail/${data.bookId}/updateCover`);
             if(data.coverImageUrl == null) {
                 setId(data.bookId);
-                navigate(`/detail/${id}/updateCover`);
+                navigate(`/detail/${id}/updateCover`,{state:{id: id , content:content}});
             }else{
                 navigate(`/`);
             }
