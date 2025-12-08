@@ -496,7 +496,6 @@ const NewBookCoverPage = () => {
                         InputProps={{ readOnly: true }}
                         sx={{ mb: 2 }}
                     />
-
                     <Button
                         fullWidth
                         variant="contained"
