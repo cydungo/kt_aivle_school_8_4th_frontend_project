@@ -8,11 +8,20 @@ import {
     Container,
     Grid,
     Paper,
+    Stack,
     TextField,
-    Typography,
-    Stack
+    Typography
 } from "@mui/material";
 import { BookOutlined, Refresh as RefreshIcon } from "@mui/icons-material";
+
+/**
+ * NewBookPageMUI.jsx
+ * - 기존 CSS 기반 NewBookPage를 MUI 컴포넌트/스타일로 완전히 전환한 버전
+ * - 레이아웃: 좌측 이미지(프리뷰) + 우측 입력폼, 하단 버튼
+ * - 기존 기능(등록 API 호출, 유효성, 네비게이션)은 유지
+ *
+ * 사용법: 기존 파일 대신 이 컴포넌트를 라우트에 연결하거나 import 해서 사용하세요.
+ */
 
 const customColors = {
     primaryPurple: "#6D28D9",
@@ -25,12 +34,28 @@ const customColors = {
 export default function NewBookPageMUI() {
     const navigate = useNavigate();
 
+    // form state
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
+    const [coverPreview, setCoverPreview] = useState(null); // local preview or generated URL
 
+    // UI state
     const [isLoading, setIsLoading] = useState(false);
     const [message, setMessage] = useState(null);
     const [messageSeverity, setMessageSeverity] = useState("info");
+
+    // file preview handler (optional)
+    const handleFileChange = (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        const previewUrl = URL.createObjectURL(file);
+        setCoverPreview(previewUrl);
+
+        // 추후 서버로 보낼 원본 파일 저장
+
+    };
+
+
 
     const submitbook = async () => {
         if (title.trim() === "") {
@@ -42,13 +67,20 @@ export default function NewBookPageMUI() {
         setIsLoading(true);
         setMessage(null);
 
-        const requestBody = { title: title.trim(), content };
+        const requestBody = {
+            title: title.trim(),
+            content: content,
+            coverImageUrl: coverPreview
+            // cover: coverPreview // 필요하면 포함
+        };
 
         try {
+            console.log(coverPreview)
+
             const response = await fetch("http://localhost:8080/api/books", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(requestBody),
+                body: JSON.stringify(requestBody)
             });
 
             if (!response.ok) {
@@ -59,10 +91,16 @@ export default function NewBookPageMUI() {
             const data = await response.json();
             setMessageSeverity("success");
             setMessage("등록 완료!");
-            // navigate to update cover page as in your original code
-            navigate(`/detail/${data.bookId}/updateCover`);
-        } catch (error) {
-            console.error("등록 중 오류:", error);
+            console.log(data);
+            // navigate to update cover page as previously
+            //navigate(`/detail/${data.bookId}/updateCover`);
+            if(data.coverImageUrl == null) {
+                navigate(`/detail/${data.bookId}/updateCover`);
+            }else{
+                navigate(`/`);
+            }
+        } catch (err) {
+            console.error("등록 중 오류:", err);
             setMessageSeverity("error");
             setMessage("등록 중 오류가 발생했습니다.");
         } finally {
@@ -74,21 +112,21 @@ export default function NewBookPageMUI() {
         <Container
             maxWidth={false}
             sx={{
-                width: "1500px",
+                width: "1100px",
                 mx: "auto",
-                py: 3,
+                py: { xs: 3, md: 5 }
             }}
         >
             {/* Banner */}
             <Paper
                 elevation={3}
                 sx={{
-                    bgcolor: "#0b5f82",
+                    bgcolor: customColors.bannerBlue,
                     color: "common.white",
-                    px:4,
-                    py: 2,
+                    px: 4,
+                    py: 1.2,
                     borderRadius: 1,
-                    mb: 3,
+                    mb: 3
                 }}
             >
                 <Stack spacing={0.2}>
@@ -99,7 +137,7 @@ export default function NewBookPageMUI() {
                 </Stack>
             </Paper>
 
-            {/* Message alert */}
+            {/* Message */}
             {message && (
                 <Alert
                     severity={messageSeverity}
@@ -114,48 +152,79 @@ export default function NewBookPageMUI() {
                                         ? "#4CAF50"
                                         : "#F44336"
                         }`,
-                        backgroundColor: customColors.backgroundLight,
+                        backgroundColor: customColors.backgroundLight
                     }}
                 >
                     {message}
                 </Alert>
             )}
 
-            {/* Main box */}
+            {/* Main card */}
             <Paper
                 elevation={4}
                 sx={{
-                    border: "2px solid #0b5f82",
-                    p: { xs: 2, md: 4 },
-                    mb: 3,
+                    border: `2px solid ${customColors.bannerBlue}`,
+                    p: { xs: 2, md: 4 }
                 }}
             >
-                <Grid container spacing={10}>
-                    {/* Left image area */}
+                <Grid container spacing={5} alignItems="start">
+                    {/* Left: Image preview */}
                     <Grid item xs={12} md={3}>
                         <Box
                             sx={{
                                 width: "100%",
-                                aspectRatio: "1.5 / 2",
-                                minHeight: 250,
-                                bgcolor: "#0b5f82",
-                                color: "white",
+                                aspectRatio: { xs: "1 / 1", md: "2 / 3" },
+                                minHeight: 220,
+                                bgcolor: coverPreview ? "transparent" : customColors.bannerBlue,
+                                color: coverPreview ? "inherit" : "white",
                                 borderRadius: 1,
                                 display: "flex",
+                                flexDirection: "column",
                                 alignItems: "center",
                                 justifyContent: "center",
-                                fontSize: 18,
-                                px: 1,
+                                overflow: "hidden",
+                                p: 1,
+                                boxShadow: 3
                             }}
                         >
-                            작품이미지
+                            {coverPreview ? (
+                                <Box
+                                    component="img"
+                                    src={coverPreview}
+                                    alt="cover preview"
+                                    sx={{
+                                        width: "100%",
+                                        height: "100%",
+                                        objectFit: "cover",
+                                        borderRadius: 1
+                                    }}
+                                />
+                            ) : (
+                                <Typography variant="h6">작품이미지</Typography>
+                            )}
+
+                            <Button
+                                variant="contained"
+                                component="label"
+                                sx={{
+                                    mt: 1,
+                                    bgcolor: "#064f6a",
+                                    "&:hover": { bgcolor: "#053f53" },
+                                    fontSize: 13,
+                                    textTransform: "none"
+                                }}
+                                size="small"
+                            >
+                                이미지 업로드
+                                <input hidden accept="image/*" type="file" onChange={handleFileChange} />
+                            </Button>
                         </Box>
                     </Grid>
 
-                    {/* Right input area */}
-                    <Grid item xs={12} md={9} sx={{width:'70%'}}>
-                        <Stack spacing={3}>
-                            <Box>
+                    {/* Right: Inputs */}
+                    <Grid item xs={12} md={9}>
+                        <Stack spacing={2}>
+                            <Box sx={{ width: "100%", maxWidth: "780px" }}>
                                 <Typography variant="subtitle1" sx={{ fontWeight: "bold", mb: 1 }}>
                                     도서 제목
                                 </Typography>
@@ -165,57 +234,56 @@ export default function NewBookPageMUI() {
                                     value={title}
                                     onChange={(e) => setTitle(e.target.value)}
                                     size="medium"
+                                    sx={{ mb: 3 }}
                                 />
-                            </Box>
 
-                            <Box>
                                 <Typography variant="subtitle1" sx={{ fontWeight: "bold", mb: 1 }}>
                                     도서 설명
                                 </Typography>
                                 <TextField
                                     fullWidth
                                     multiline
-                                    rows={6}
+                                    rows={7}
                                     placeholder="도서 설명을 입력하세요"
                                     value={content}
                                     onChange={(e) => setContent(e.target.value)}
                                 />
                             </Box>
+
+                            {/* Buttons aligned to right */}
+                            <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2, mt: 1 }}>
+                                <Button
+                                    variant="outlined"
+                                    onClick={() => navigate("/")}
+                                    sx={{
+                                        bgcolor: "#f5f5f5",
+                                        borderColor: "#d0d0d0",
+                                        color: "#333",
+                                        textTransform: "none"
+                                    }}
+                                >
+                                    취소
+                                </Button>
+
+                                <Button
+                                    variant="contained"
+                                    onClick={submitbook}
+                                    disabled={isLoading}
+                                    startIcon={isLoading ? <CircularProgress size={18} color="inherit" /> : <RefreshIcon />}
+                                    sx={{
+                                        bgcolor: customColors.bannerBlue,
+                                        "&:hover": { bgcolor: "#064f6a" },
+                                        color: "white",
+                                        textTransform: "none"
+                                    }}
+                                >
+                                    {isLoading ? "등록 중..." : "등록"}
+                                </Button>
+                            </Box>
                         </Stack>
                     </Grid>
                 </Grid>
             </Paper>
-
-            {/* Buttons */}
-            <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2 }}>
-                <Button
-                    variant="outlined"
-                    onClick={() => navigate("/")}
-                    sx={{
-                        bgcolor: "#f5f5f5",
-                        borderColor: "#d0d0d0",
-                        color: "#333",
-                        textTransform: "none",
-                    }}
-                >
-                    취소
-                </Button>
-
-                <Button
-                    variant="contained"
-                    onClick={submitbook}
-                    disabled={isLoading}
-                    startIcon={isLoading ? <CircularProgress size={18} color="inherit" /> : <RefreshIcon />}
-                    sx={{
-                        bgcolor: "#0b5f82",
-                        "&:hover": { bgcolor: "#064f6a" },
-                        color: "white",
-                        textTransform: "none",
-                    }}
-                >
-                    {isLoading ? "등록 중..." : "등록"}
-                </Button>
-            </Box>
         </Container>
     );
 }
