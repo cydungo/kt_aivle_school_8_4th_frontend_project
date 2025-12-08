@@ -1,4 +1,4 @@
-import React, {createContext, useState} from "react";
+import React, {useState} from "react";
 import { useNavigate } from "react-router-dom";
 import {
     Alert,
@@ -203,7 +203,7 @@ export default function NewBookPageMUI() {
                                     }}
                                 />
                             ) : (
-                                <Typography variant="h6">작품이미지</Typography>
+                                <Typography variant="h8">등록 시 이미지 생성</Typography>
                             )}
 
                             <Button
@@ -280,7 +280,7 @@ export default function NewBookPageMUI() {
                                         textTransform: "none"
                                     }}
                                 >
-                                    {isLoading ? "등록 중..." : "등록"}
+                                    {coverPreview ? "등록" : "AI생성페이지"}
                                 </Button>
                             </Box>
                         </Stack>

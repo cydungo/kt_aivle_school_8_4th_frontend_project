@@ -195,6 +195,23 @@ export default function RevisePage() {
                         이미지 업로드
                         <input hidden accept="image/*" type="file" onChange={handleFileChange} />
                     </Button>
+                    <Button
+                        variant="contained"
+                        onClick = {() =>  navigate(`/detail/${id}/updateCover`,{state:{id: id , content:content}})}
+                        sx={{
+                            marginLeft:4,
+                            mt: 3,
+                            bgcolor: "#064f6a",
+                            position: "medium",
+                            "&:hover": { bgcolor: "#053f53" },
+                            fontSize: 13,
+                            textTransform: "none"
+                        }}
+                        size="small"
+                    >
+                        AI 이미지 생성
+
+                    </Button>
                 </Grid>
 
                 {/* Right: Inputs */}
